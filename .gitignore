@@ -1,0 +1,4 @@
+.stack-work/
+joey-websockets.cabal
+*~
+node_modules
