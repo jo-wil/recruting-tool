@@ -95,29 +95,82 @@
 
 "use strict";
 
-var ws;
-function onClose(event_) {
-    console.log("onClose", event_);
+//let ws: WebSocket;
+//
+//function onClose(event_: Event): void {
+//  console.log("onClose", event_);
+//}
+//
+//function onMessage(event_: MessageEvent): void {
+//  console.log("onMessage", event_);
+//}
+//
+//function onOpen(event_: Event): void {
+//  console.log("onOpen", event_);
+//  ws.send("Hi, Server from onOpen");
+//}
+//
+//function sendMessage() {
+//  ws.send("Hi, Server from sendMessage");
+//}
+//
+//function main() {
+//  console.log("app running");
+//  ws = new WebSocket("ws://localhost:8080");
+//  ws.addEventListener("close", onClose);
+//  ws.addEventListener("open", onOpen);
+//  ws.addEventListener("message", onMessage);
+//  const sendMessageButton = document.querySelector("#send-message");
+//  if (sendMessageButton !== null) {
+//    sendMessageButton.addEventListener("click", sendMessage);
+//  }
+//}
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+function scheduleInterviewApi(data) {
+    return window.fetch("/api/interview", {
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        method: "POST"
+    })
+        .then(function (response) { return response.text(); });
 }
-function onMessage(event_) {
-    console.log("onMessage", event_);
-}
-function onOpen(event_) {
-    console.log("onOpen", event_);
-    ws.send("Hi, Server from onOpen");
-}
-function sendMessage() {
-    ws.send("Hi, Server from sendMessage");
+function scheduleInterview(event) {
+    event.preventDefault();
+    console.log("scheduleInterview", event);
+    var element = event.srcElement;
+    if (element) {
+        var data = Array.from(element.querySelectorAll("[name]"))
+            .reduce(function (a, v) {
+            var _a;
+            return (__assign({}, a, (_a = {}, _a[v.name] = v.value, _a)));
+        }, {});
+        console.log("data", data);
+        scheduleInterviewApi(data)
+            .then(function (result) {
+            var message = document.querySelector("#message");
+            if (message) {
+                message.innerHTML = result;
+            }
+        });
+    }
 }
 function main() {
     console.log("app running");
-    ws = new WebSocket("ws://localhost:8080");
-    ws.addEventListener("close", onClose);
-    ws.addEventListener("open", onOpen);
-    ws.addEventListener("message", onMessage);
-    var sendMessageButton = document.querySelector("#send-message");
-    if (sendMessageButton !== null) {
-        sendMessageButton.addEventListener("click", sendMessage);
+    var interviewForm = document.querySelector("#interview-form");
+    if (interviewForm) {
+        interviewForm.addEventListener("submit", scheduleInterview);
     }
 }
 document.addEventListener("DOMContentLoaded", main);
